@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">panorama</string>
+    <string name="title_activity_main">panorama</string>
+    <string name="package_name">ionic.panorama</string>
+    <string name="custom_url_scheme">ionic.panorama</string>
+</resources>

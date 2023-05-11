@@ -1,0 +1,7 @@
+{
+  "name": "panorama",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
