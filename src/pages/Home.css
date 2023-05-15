@@ -1,0 +1,112 @@
+.content-camera-preview {
+    --background: transparent;
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+.cameraPreview { 
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.image-overlay {
+    z-index: 1;
+    position: absolute;
+    left: 25%;
+    top: 40%;
+    width: 50%;
+}
+
+.display-cover {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    height: 90%;
+    margin: 5% auto;
+    position: relative;
+}
+
+.center {
+    position: absolute;
+    top: auto;
+    left: auto;
+    width: 80px;
+    height: 80px;
+    border: #34d980 3px solid;
+    border-radius: 50%;
+}
+
+
+.square {
+    position: absolute;
+    top: auto;
+    left: auto;
+    width: 200px;
+    height: 300px;
+    border: white 2px solid;
+}
+
+.pos {
+    z-index: 99999;
+    position: absolute;
+    color: black;
+    font-size: large;
+}
+
+.gradient-images {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.gradient-images > div {
+    display: flex;
+    justify-content: space-around;
+}
+
+.circle {
+    height: 15px;
+    width: 15px;
+    /*background-color: #bbb;*/
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.noPhotographed {
+    background-color: red;
+}
+
+.readyPhotographed {
+    background-color: yellow;
+}
+
+.photographed {
+    background-color: green;
+}
+
+.circleBig {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border: #025025 3px solid;
+    background: #34d980;
+    border-radius: 50%;
+}
+
+.guideDiv {
+    position: absolute;
+    width: 200px;
+    height: 300px;
+    /*background: none !important;*/
+    background: rgba(255, 255, 255, 0.35);
+}
