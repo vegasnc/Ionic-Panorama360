@@ -85,7 +85,8 @@ const Sphere = (props) => {
                 return `translate(${translateX}vw, ${-(gradient.beta - beta)}vh)
                                 perspective(300px)
                                 rotateY(${-translateX * 1.5}deg)
-                                rotateX(${-(gradient.beta - beta)}deg)`;
+                                rotateX(${-(gradient.beta - beta)}deg)
+                                rotateZ(${-translateX * 1.5}deg)`;
             };
         
             gradientImages.innerHTML = "";
@@ -119,7 +120,7 @@ const Sphere = (props) => {
                                 gradient.readyToPhotographed = false;
                                 // To do capture image
                                 // doScreenshot(gradient);
-                                captureImage();
+                                // captureImage();
                             }
                         }
                     }
