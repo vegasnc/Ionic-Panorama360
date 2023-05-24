@@ -24,9 +24,9 @@
     "@ionic/react-router": "^7.0.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
-    "photo-sphere-viewer": "^4.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-photo-sphere-viewer": "^3.3.5-psv5.1.4",
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
     "terser": "^5.17.3"

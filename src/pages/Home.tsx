@@ -1,82 +1,85 @@
-import { IonContent, IonHeader, IonPage, IonTitle, 
-  IonToolbar, IonButton, IonToast } from '@ionic/react';
-import { CameraPreview, CameraPreviewOptions } from '@capacitor-community/camera-preview';
-import { Filesystem, Directory } from '@capacitor/filesystem';
+import { 
+  IonContent, 
+  IonHeader, 
+  IonPage, 
+  IonTitle, 
+  IonToolbar, 
+  IonList, 
+  IonThumbnail, 
+  IonLabel, 
+  IonIcon, 
+  IonItem, 
+  IonFab,
+  IonFabButton } from '@ionic/react';
+import { Filesystem, Directory, FileInfo } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
+import { add } from 'ionicons/icons';
+
+/* Basic CSS for apps built with Ionic */
+import '@ionic/react/css/normalize.css';
+import '@ionic/react/css/structure.css';
+import '@ionic/react/css/typography.css';
+
+/* Optional CSS utils that can be commented out */
+import '@ionic/react/css/padding.css';
+import '@ionic/react/css/float-elements.css';
+import '@ionic/react/css/text-alignment.css';
+import '@ionic/react/css/text-transformation.css';
+import '@ionic/react/css/flex-utils.css';
+import '@ionic/react/css/display.css';
 
 import React from "react";
 import './Home.css';
 import { useEffect, useState } from 'react';
-import Sphere from './sphere';
-
+import { useHistory } from 'react-router';
 
 const Home: React.FC = () => {
 
-  const [capturedImage, setImage] = useState('');
-  const [savedImagePath, setImagePath] = useState('');
-  const [pose, setPose] = useState('');
-  const [toastIsOpen, setToastIsOpen] = useState(false);
+  const [imageFiles, setImageFiles] = useState<FileInfo[]>();
+  // const ionRouter = useIonRouter();
+  const history = useHistory();
 
   useEffect(() => {
-    const cameraPreviewOptions: CameraPreviewOptions = {
-      parent: 'content',
-      toBack: true,
-      position: 'rear'
-    };
+    fetchFileList();
+  })
 
-    CameraPreview.start(cameraPreviewOptions);
-  }, []);
+  const fetchFileList = async () => {
+    try {
+      const directory = 'Panorama'; // Replace with the actual directory path
+      const fileList = await Filesystem.readdir({
+        path: directory,
+        directory: Directory.ExternalStorage
+      });
 
-  const captureImage = async () => {
-    const cameraPreviewOptions: CameraPreviewOptions = {
-      parent: 'content',
-      toBack: true,
-      position: 'rear',
-    };
+      const fileCnt = fileList.files.length;
+      if( fileCnt > 0 ) {
+        setImageFiles(fileList.files);
+      }
 
-    const result = await CameraPreview.capture(cameraPreviewOptions);
-    const base64Data = 'data:image/jpeg;base64,' + result.value;
-
-    // Write the file to the data directory
-    const fileName = new Date().getTime() + '.jpeg';
-    const savedFile = await Filesystem.writeFile({
-      path: fileName,
-      data: base64Data,
-      directory: Directory.Documents
-    })
-    setImagePath(savedFile.uri);
-    setImage( base64Data );
+      // Process the file list as needed
+    } catch (error) {
+      console.error('Error reading directory:', error);
+    }
   }
 
-  const clientBtn = () => {
-    captureImage();
-    setToastIsOpen(true);
+  const getImageDataFromURI = async (fileURI: string) => {
+    const readFile = await Filesystem.readFile({
+      path: fileURI
+    });
+
+    console.log(readFile);
+
+    return `data:image/jpeg;base64,${readFile.data}` as string;
   }
 
-  // get FOV(field of view) of camera from captured image
-  // const getFov = async () => {
-  //   const cameraPreviewOptions: CameraPreviewOptions = {
-  //     parent: 'content',
-  //     toBack: true,
-  //     position: 'rear',
-  //     width: window.screen.width,
-  //     height: window.screen.height,
-  //   };
+  const clickItem = (imageFileURI: string) => {
+    history.push(`/viewer/${encodeURIComponent(imageFileURI)}`);
+  }
 
-  //   const result = await CameraPreview.capture(cameraPreviewOptions);
-  //   setImage('data:image/jpeg;base64,' + result.value);
-  // }
-
-  // const handleImageLoad = (event: { target: any; }) => {
-  //   const imageElement = event.target;
-  //   const naturalWidth = imageElement.naturalWidth;
-  //   const naturalHeight = imageElement.naturalHeight;
-
-  //   const diagonal = Math.sqrt(naturalWidth * naturalWidth + naturalHeight * naturalHeight);
-  //   const fov = (2 * Math.atan(diagonal / (2 * naturalHeight))) * (180 / Math.PI);
-
-  //   console.log('Camera FOV:', fov);
-  //   setFOV(fov + "," + naturalWidth + "," + naturalHeight);
-  // }
+  const goToCapture = () => {
+    history.push('/capture');
+  }
+  
 
   return (
     <IonPage>
@@ -85,24 +88,28 @@ const Home: React.FC = () => {
           <IonTitle>Panorama 360</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent id="content" className='content-camera-preview' fullscreen>
-        <Sphere captureImage={clientBtn}></Sphere>
-          <div className="display-cover content-camera-preview">
-            <div className='gradient-images content-camera-preview'></div>
-            <div className='square content-camera-preview'></div>
-            <div className='center content-camera-preview'></div>
-          </div>
-        <div style={{ position: "absolute", bottom: "0"}}>
+      <IonContent id="content" fullscreen>
+        <IonList lines='full'>
           {
-            capturedImage !== "" ? <img src={capturedImage} style={{width: "150px"}}></img> : <></>
+            imageFiles?.map((imageFile, index) => 
+              <IonItem key={index} onClick={() => clickItem(imageFile.uri)}>
+                <IonThumbnail slot="start">
+                  <img alt="thumbnail" src={Capacitor.convertFileSrc(imageFile.uri)}></img>
+                </IonThumbnail>
+                <IonLabel>
+                  { imageFile.name }
+                </IonLabel>
+              </IonItem>
+            )
           }
-        </div>
-        <IonToast
-          isOpen={toastIsOpen}
-          message={"Succeeded captured!" + savedImagePath}
-          onDidDismiss={() => setToastIsOpen(false)}
-          duration={5000}
-        ></IonToast>
+        </IonList>
+        <IonFab slot='fixed' vertical='bottom' horizontal='end'>
+          <IonFabButton 
+            size='small'
+            onClick={() => goToCapture()}>
+            <IonIcon icon={add}></IonIcon>
+          </IonFabButton>
+        </IonFab>
       </IonContent>
     </IonPage>
   );

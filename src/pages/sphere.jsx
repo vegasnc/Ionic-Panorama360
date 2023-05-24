@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { stateForGradientImages,
         guideColor,
         squareColor,
@@ -11,6 +11,9 @@ const Sphere = (props) => {
 
     // Capture image
     const { captureImage } = props;
+
+    const [deviceGamma1, setGamma1] = useState(0);
+    const [deviceGamma2, setGamma2] = useState(0);
 
     var degtorad = Math.PI / 180; // Degree-to-Radian conversion
     
@@ -62,10 +65,14 @@ const Sphere = (props) => {
             let alpha = (event.alpha).toFixed(1);
             let beta = (event.beta).toFixed(1);
             let gamma = (event.gamma).toFixed(1);
+
+            setGamma1(gamma);
         
             alpha = (180 - compassHeading(alpha, beta, gamma)).toFixed(1);
             if (beta > 85 && beta < 95)
                 gamma = 0;
+
+            setGamma2(gamma);
         
             const displayCover = document.querySelector(".display-cover");
             const gradientImages = document.querySelector(".gradient-images");
@@ -81,12 +88,12 @@ const Sphere = (props) => {
                 }
             }
         
-            const transformStyleGenerator = (gradient, beta, translateX) => {
+            const transformStyleGenerator = (gradient, beta, translateX, gamma) => {
                 return `translate(${translateX}vw, ${-(gradient.beta - beta)}vh)
                                 perspective(300px)
                                 rotateY(${-translateX * 1.5}deg)
                                 rotateX(${-(gradient.beta - beta)}deg)
-                                rotateZ(${-translateX * 1.5}deg)`;
+                                rotateZ(${gamma}deg)`;
             };
         
             gradientImages.innerHTML = "";
@@ -152,12 +159,14 @@ const Sphere = (props) => {
                         guideCircle.style.transform = transformStyleGenerator(
                             gradient,
                             beta,
-                            translateX
+                            translateX,
+                            gamma
                         );
                         guideDiv.style.transform = transformStyleGenerator(
                             gradient,
                             beta,
-                            translateX
+                            translateX,
+                            gamma
                         );
                     } else {
                         document.querySelector(
@@ -165,14 +174,16 @@ const Sphere = (props) => {
                         ).style.transform = transformStyleGenerator(
                             gradient,
                             beta,
-                            translateX
+                            translateX,
+                            gamma
                         );
                         document.querySelector(
                             `.guideDiv_${gradient.id}`
                         ).style.transform = transformStyleGenerator(
                             gradient,
                             beta,
-                            translateX
+                            translateX,
+                            gamma
                         );
                     }
                 };
@@ -256,7 +267,11 @@ const Sphere = (props) => {
         }
     }, []);
 
-    return <></>;
+    return <div>
+        <span>Gamma1 = {deviceGamma1}</span>
+        <br />
+        <span>Gamma2 = {deviceGamma2}</span>
+    </div>;
 }
 
 export default Sphere;
